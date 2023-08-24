@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST" action="/">
+        <input type="text" name="text">
+        <button type="submit">Get pokémon</button>
+    </form>
+    {% if error == 1 %}
+    <h1>That pokémon doesnt exist. Try again</h1>
+    {% endif %}
+    {% if text %}
+    <h1>{{ text }}</h1>
+    {% endif %}
+</body>
+</html>
