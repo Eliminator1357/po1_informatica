@@ -27,14 +27,16 @@ def get_moves(pokemon):
     results = response['results']
     moves = results[0]['name']
     for i in range(1,len(results)):
-        moves += f', {results[i]["name"]}'
+        if results[i]:
+            if results[i]['name']:
+                moves += f', {results[i]["name"]}'
     print(moves)
     return moves
 
 #print(get_moves('charizard'))
 
 @app.route('/', methods = ['GET', 'POST'])
-def hello_world(text=None, error=0):
+def hello_world(text='', error=0):
     try:
         pokemon = request.form['text'].lower()
         print(is_pokemon(pokemon))
