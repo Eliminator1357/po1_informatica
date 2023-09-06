@@ -2,19 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pokémon</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
 </head>
-<body>
-    <form method="POST" action="/">
-        <input type="text" name="text">
-        <button type="submit">Get pokémon</button>
+<body class="bg-emerald-500">
+    <h1 class="pl-1 pt-1 text-3xl">Pokédex</h1>
+    <p class="pl-1">Get pokémon</p>
+    <form method="POST" action="/" class="bg-emerald-500 p-2">
+        <input type="text" name="text" class="p-1 rounded font-normal">
+        <button type="submit" class="bg-emerald-300 rounded p-1 m-1">Get pokémon</button>
     </form>
+
+
+    <div class="m-1">
     {% if error == 1 %}
-    <h1>That pokémon doesnt exist. Try again</h1>
+    <h1 class="error font-normal">That pokémon doesnt exist. Try again</h1>
     {% endif %}
-    {% if text %}
-    <h1>{{ text }}</h1>
+    {% if pokemonName %}
+    <h1 class="title text-xl">{{ pokemonName }}</h1>
+    <p class="maintext font-normal pd-2">{{ pokemonName }} has the following moves: <br></p>
+        <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
+        {% for move in moves %}
+        <li class="before:content-['\2022'] before:mr-1">{{ move }}</li>
+        {% endfor %}
+    </ul>
     {% endif %}
+    </div>
 </body>
 </html>

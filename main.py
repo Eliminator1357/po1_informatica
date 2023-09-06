@@ -23,20 +23,25 @@ def get_moves(pokemon):
         quit()
     else:
         response = requests.get(url, params = params).json()
-    
+    # zorg ervoor dat arrey returnt
     results = response['results']
-    moves = results[0]['name']
+    moves = [results[0]['name'].capitalize()]
     for i in range(1,len(results)):
         if results[i]:
             if results[i]['name']:
-                moves += f', {results[i]["name"]}'
-    print(moves)
+                moves.append(f'{results[i]["name"].capitalize()}')
     return moves
+
 
 #print(get_moves('charizard'))
 
+
+def get_info(pokemon):
+    pass
+
 @app.route('/', methods = ['GET', 'POST'])
-def hello_world(text='', error=0):
+def hello_world(pokemonName='', maintext = '', error=0, moves=''):
+    # check if pokemon exists, give error page if not
     try:
         pokemon = request.form['text'].lower()
         print(is_pokemon(pokemon))
@@ -44,11 +49,14 @@ def hello_world(text='', error=0):
             return render_template('index.html', text=None, error=1)
     except Exception as e:
         return render_template('index.html', text=e, error=0)
-    text += f'{pokemon} has the following moves:\n{get_moves(pokemon)}'
+    moves = get_moves(pokemon)
+    print(type(moves))
     
     
     
 
-    return render_template('index.html', text=text, error=error)
+    return render_template('index.html', pokemonName=pokemon.capitalize(), error=error, moves=moves)
 
 
+if __name__ == "__main__" and 1==1:
+    print(get_moves('charizard'))
