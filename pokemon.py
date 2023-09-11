@@ -27,5 +27,5 @@ def format_names():
             ids.append(poke_id)
             names.append(result['name'])
     array = [{'name':names[i], 'id':ids[i]} for i in range(len(names))]
-
     return array
+#print(get_pokemon())

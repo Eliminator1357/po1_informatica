@@ -22,10 +22,13 @@
     {% endif %}
     {% if pokemonName %}
     <h1 class="title text-xl">{{ pokemonName }}</h1>
+    {% if poke_id > 0 %}
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ poke_id }}.png" class="mr-4 rounded-xl border-8 border-emerald-300 bg-slate-300">
+    {% endif %}
     <p class="maintext font-normal pd-2">{{ pokemonName }} has the following moves: <br></p>
         <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
         {% for move in moves %}
-        <li class="before:content-['\2022'] before:mr-1">{{ move }}</li>
+        <li class="before:content-['\2022'] before:mr-1 pr-1">{{ move }}</li>
         {% endfor %}
     </ul>
     {% endif %}
