@@ -12,34 +12,22 @@ def is_pokemon(s: str) -> bool:
             return True
     return False
 
-def get_image(pokemon: str) -> str:
 
-    spriteURL = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png'
-    return spriteURL
-
-
-def get_moves(pokemon) -> list:
-    params = {
-        'name':pokemon
-    }
-    url = ('https://pokeapi.co/api/v2/move/')
-    r = requests.get(url)
-    status = r.status_code
-    if status != 200:
-        quit()
-    else:
-        response = requests.get(url, params = params).json()
-    # zorg ervoor dat arrey returnt
-    results = response['results']
-    moves = [results[0]['name'].capitalize()]
-    for i in range(1,len(results)):
-        if results[i]:
-            if results[i]['name']:
-                moves.append(f'{results[i]["name"].capitalize()}')
+def get_moves(movelist) -> list:
+    moves = [movelist[0]['move']['name'].capitalize()]
+    for i in range(1,len(movelist)):
+        if movelist[i]['move']:
+            if movelist[i]['move']['name']:
+                moves.append(f"{movelist[i]['move']['name'].capitalize()}")
     return moves
 
-
 #print(get_moves('charizard'))
+
+def get_stats(stats) -> list:
+    return [
+        [stat['stat']['name'].upper(),
+         stat['base_stat']] 
+        for stat in stats]
 
 
 def get_info(pokemon) -> list:
@@ -49,17 +37,25 @@ def get_info(pokemon) -> list:
     if status != 200:
         quit()
     else:
-        response = requests.get(url).json()
-    #print(f'Response: \n\n\n{response}')
-    poke_id = response['id']
-    return [poke_id]
+        r = requests.get(url).json()
+    #print(f'r: \n\n\n{r}')
+    types = r['types'][0]['type']['name']
+    print(types)
+    if len(r['types']) == 2:
+        types = f"{types} and {r['types'][1]['type']['name']}"
+        print(types)
+    games = [r['game_indices'][i]['version']['name'].capitalize() for i in range(len(r['game_indices']))]
+    poke_id = r['id']
+    moves = get_moves(r['moves'])
+    stats = get_stats(r['stats'])
+    return [poke_id, types, games, moves, stats]
 
 
 
 
 # pokemon id voor image
 @app.route('/', methods = ['GET', 'POST'])
-def hello_world(pokemonName='', maintext = '', error=0, moves='', poke_id=-1):
+def hello_world(pokemonName='', maintext = '', error=0, moves='', poke_id=-1, types='', games='', stats=None):
     # check if pokemon exists, give error page if not
     try:
         pokemon = request.form['text'].lower()
@@ -70,15 +66,11 @@ def hello_world(pokemonName='', maintext = '', error=0, moves='', poke_id=-1):
         return render_template('index.html', text=e, error=0)
     info = get_info(pokemon)
     poke_id = info[0]
-    moves = get_moves(pokemon)
-    
+    types=info[1]
+    games = info[2]
+    moves = info[3]
+    stats = info[4]
     
     
 
-    return render_template('index.html', pokemonName=pokemon.capitalize(), error=error, moves=moves, poke_id=poke_id)
-
-
-if __name__ == "__main__" and 1==1:
-    #print(get_moves('charizard'))
-    #print(get_image('6'))
-    print(get_info('charizard'))
+    return render_template('index.html', pokemonName=pokemon.capitalize(), error=error, moves=moves, poke_id=poke_id, types=types, games=games, stats=stats)
