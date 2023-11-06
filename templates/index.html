@@ -1,3 +1,8 @@
+{% macro pokemonImage(id) -%}
+<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ id }}.png"
+    class="mx-4 my-2 rounded-xl border-8 border-emerald-300 bg-slate-300">
+{% endmacro -%}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +10,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokédex</title>
+    <title>{{ "Pokédex - " + pokemonName if pokemonName else "Pokédex" }}</title>
     <script src="{{url_for('static',filename='app.js')}}"></script>
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
     <link rel="icon" type="image/x-icon" href="{{url_for('static',filename='favicon.ico')}}">
@@ -21,9 +26,11 @@
         </div>
         <div class="order-2">
             <h1 class="pl-1 pt-1 text-3xl">Pokédex</h1>
+            <p class="font-normal pl-1">Type random for a random pokémon!</p>
             <form method="POST" action="/" class="bg-emerald-500 p-2">
                 <input type="text" name="text" placeholder="Pikachu" class="p-1 rounded font-normal">
-                <button type="submit" class="bg-emerald-300 rounded p-1 m-1" onclick="loadingscreen()">Get
+                <input type='hidden' name='extra_sprites' value="0">
+                <button type="submit" class="bg-emerald-300 rounded p-1 m-1">Get
                     pokémon</button>
             </form>
         </div>
@@ -33,7 +40,9 @@
     <!-- als de website al een keer is gebruikt -->
     <h1 class="pl-1 mx-1 pt-1 text-3xl">Pokédex</h1>
     <form method="POST" action="/" class="bg-emerald-500 p-2">
-        <input type="text" name="text" placeholder="{{ pokemonName if pokemonName else 'Pikachu'}}" class="p-1 rounded font-normal">
+        <input type="text" name="text" placeholder="{{ pokemonName if pokemonName else 'Pikachu'}}"
+            class="p-1 rounded font-normal">
+        <input type='hidden' name='extra_sprites' value="0">
         <button type="submit" class="bg-emerald-300 rounded p-1 m-1">Get pokémon</button>
     </form>
     {% endif %}
@@ -43,12 +52,90 @@
         {% if error == 1 %}
         <h1 class="flex text-center error font-normal">That pokémon doesnt exist. Try again</h1>
         {% endif %}
+    </div>
 
 
+    {% if pokemonName %}
+    <h1 class="px-2 title text-xl">{{ pokemonName }}</h1>
+    <p class="font-normal px-2 pb-2">{{ pokemonName }} is {{ 'an' if types[0] in ['a','e','i','o','u'] else 'a' }} {{
+        types }} type pokémon.</p>
+    {% endif %}
+    {% if poke_id %}
+    {% if poke_id > 0 %}
+    {{ pokemonImage(poke_id) }}
+    {% endif %}
+    {% endif %}
+
+    <div id='mainpage' class="px-2 flex flex-1 flex-wrap justify-between w-full gap-1">
         {% if pokemonName %}
-        <h1 class="title text-xl">{{ pokemonName }}</h1>
-        <p class="font-normal pb-2">{{ pokemonName }} is {{ 'an' if types[0] in ['a','e','i','o','u'] else 'a' }} {{ types }} type pokémon.</p>
-        <div class="order-1 flex-initial ml-1 bg-emerald-200 rounded px-1 py-1 w-fit">
+        <div class="order-1 flex-grow ml-1 bg-emerald-200 rounded p-2 h-fit w-fit">
+            <p class="font-normal pb-2">{{ pokemonName }} can have the following moves: </p>
+            <div class="flex flex-wrap">
+                <ul class="ml-1 bg-emerald-300 rounded pl-1 w-fit">
+                    {% for move in moves[:moves|length // 4] %}
+                    <li class="before:content-['\2022'] before:mr-1 pr-3">{{ move }}</li>
+                    {% endfor %}
+                </ul>
+                <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
+                    {% for move in moves[moves|length // 4:moves|length // 2] %}
+                    <li class="before:content-['\2022'] before:mr-1 pr-3">{{ move }}</li>
+                    {% endfor %}
+                </ul>
+                <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
+                    {% for move in moves[moves|length // 2:3 * moves|length // 4] %}
+                    <li class="before:content-['\2022'] before:mr-1 pr-3">{{ move }}</li>
+                    {% endfor %}
+                </ul>
+                <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
+                    {% for move in moves[3 * moves|length // 4:] %}
+                    <li class="before:content-['\2022'] before:mr-1 pr-3">{{ move }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+
+        {% if games %}
+        <div class="order-1 flex-grow ml-1 bg-emerald-200 rounded p-1 w-fit  h-fit">
+            <p class="font-normal pb-2">{{ pokemonName}} appears in these games: </p>
+            <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
+                {% for game in games %}
+                <li class="before:content-['\2022'] before:mr-1 pr-3">{{ game }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+
+        {% if evolutions %}
+        <div class="order-1 flex-grow ml-1 bg-emerald-200 rounded p-1 w-fit  h-fit">
+            <p class="font-normal pb-2">These pokémon are in {{ pokemonName}}s evolution chain: </p>
+            <!--<ul class="ml-3 bg-emerald-300 rounded p-1 w-fit">-->
+            <div class="flex flex-wrap">
+                {% for evo in evolutions %}
+                <div class="p-2 min-w-min max-w-fit w-1/3">
+
+
+                    <form method="POST" action="/" class="bg-emerald-500 px-2 rounded">
+                        <button type="submit" class="flex flex-col items-center justify-center rounded-xl">
+                            <p class="">{{ evo['name'] }}</p>
+                            <input type="hidden" name="text" value="{{ evo['name'] }}">
+                            <input type='hidden' name='extra_sprites' value="0">
+                            {{ pokemonImage(evo['id']) }}
+                        </button>
+                    </form>
+
+                </div>
+                {% endfor %}
+            </div>
+            </ul>
+        </div>
+        {% endif %}
+
+
+        {% if stats %}
+        <div class="order-1 flex-grow ml-1 bg-emerald-200 rounded p-1 w-fit  h-fit">
             <p class="font-normal pb-2">{{ pokemonName }} has these base stats: </p>
             <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
                 {% for stat in stats %}
@@ -56,34 +143,34 @@
                 {% endfor %}
             </ul>
         </div>
-        {% if poke_id > 0 %}
-        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ poke_id }}.png"
-            class="mx-4 my-2 rounded-xl border-8 border-emerald-300 bg-slate-300">
         {% endif %}
 
-        <div class="flex flex-row justify-normal flex-wrap space-x-2">
 
-            <div class="order-1 flex-initial ml-1 bg-emerald-200 rounded px-1 py-1 w-fit">
-                <p class="font-normal pb-2">{{ pokemonName }} can have the following moves: </p>
-                <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
-                    {% for move in moves %}
-                    <li class="before:content-['\2022'] before:mr-1 pr-3">{{ move }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
+        {% if sprites %}
+        <div class="order-1 flex-grow ml-1 bg-emerald-200 rounded px-1 w-fit py-3 h-fit">
+            <p class="font-normal pb-2">{{ pokemonName }} has these sprites: </p>
+            <form method="POST" action="/">
+                <input type='hidden' name='extra_sprites' value="{{ '1' if sprites|length < 9 else '0' }}">
+                <input type="hidden" name="text" value="{{ pokemonName }}">
+                <button type='submit' class="bg-emerald-300 rounded p-1 m-1">{{ 'More sprites' if sprites|length < 9
+                        else 'Less sprites' }}</button>
+            </form>
+            <div class="flex flex-auto flex-wrap w-fit">
+                {% for spriteURL in sprites %}
+                {% if spriteURL %}
 
-            {% if games %}
-            <div class="order-1 flex-initial ml-1 bg-emerald-200 rounded px-1 w-fit py-1">
-                <p class="font-normal pb-2">{{ pokemonName}} appears in these games: </p>
-                <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
-                    {% for game in games %}
-                    <li class="before:content-['\2022'] before:mr-1 pr-3">{{ game }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+                <div class="w-1/4 py-1 min-w-fit">
+                    <img src="{{ spriteURL }}" class="w-24 h-24 rounded-xl border-8 border-emerald-300 bg-slate-300">
+                </div>
+
+                {% endif %}
+                {% endfor %}
             </div>
         </div>
         {% endif %}
+
+
+    </div>
 </body>
 
 </html>
