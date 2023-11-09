@@ -74,7 +74,8 @@ def get_sprites(sprites, extrasprites) -> list:
                 if other[key][tempkey]:
                     spriteURLS.append(other[key][tempkey])
 
-        # hier is er nog een derde for loop nodig omdat er hier 3 dicts genest zijn
+        # hier is er nog een derde for loop nodig omdat er hier 3 dicts genest zijn:
+        # versions -> generations -> game -> links
         generationkeys = list(versions.keys())
         for generation in generationkeys:
             gamekeys = list(versions[generation].keys())
@@ -126,16 +127,16 @@ def get_info(pokemon, extrasprites) -> list:
 
 @app.route("/", methods=["GET", "POST"])
 def main(
-    pokemonName="",
-    maintext="",
-    error=0,
-    moves="",
-    poke_id=-1,
-    types="",
-    games="",
-    stats=None,
-    evolutions=None,
-    sprites=None,
+        pokemonName="",
+        maintext="",
+        error=0,
+        moves="",
+        poke_id=-1,
+        types="",
+        games="",
+        stats=None,
+        evolutions=None,
+        sprites=None,
 ):
     # om de tijd te beoordelen is time.perf_counter beter dan time.time omdat perf_counter nauwkeuriger is
     start_time = time.perf_counter()
@@ -170,7 +171,7 @@ def main(
     sprites = info[6]
 
     end_time = time.perf_counter()
-    print(f"Pagina laden duurde {end_time-start_time:.2f} sec.")
+    print(f"Pagina laden duurde {end_time - start_time:.2f} sec.")
     return render_template(
         "index.html",
         pokemonName=pokemon.capitalize(),
