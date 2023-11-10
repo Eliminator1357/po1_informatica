@@ -12,7 +12,7 @@ Flask is een eenvoudige python framework om makkelijk web apps te maken.
 Flask gebruikt de jinja2 template engine, waardoor je makkelijk informatie weer kan geven op de pagina.
 
 ## Tailwindcss
-Tailwindcss is een css framework dat een heleboel kleine classes toevoegt.
+[Tailwindcss](https://tailwindcss.com/) is een css framework dat een heleboel kleine classes toevoegt.
 Deze classes hebben allemaal één specefiek doel, waardoor je ze makkelijk kan combineren.
 Het fijne van tailwind is dat je niet de hele tijd tussen je html en css bestanden hoeft te wisselen.
 Je kan gewoon de goede class opzoeken en die direct in je html zetten.

@@ -70,8 +70,8 @@
         {% if pokemonName %}
         <div class="order-1 flex-grow ml-1 bg-emerald-200 rounded p-2 h-fit w-fit">
             <p class="font-normal pb-2">{{ pokemonName }} can have the following moves: </p>
-            <div class="flex flex-wrap">
-                <ul class="ml-1 bg-emerald-300 rounded pl-1 w-fit">
+            <div class="flex flex-wrap justify-between">
+                <ul class="ml-3 bg-emerald-300 rounded pl-1 w-fit">
                     {% for move in moves[:moves|length // 4] %}
                     <li class="before:content-['\2022'] before:mr-1 pr-3">{{ move }}</li>
                     {% endfor %}
